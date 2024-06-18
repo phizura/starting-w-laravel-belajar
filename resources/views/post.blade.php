@@ -13,8 +13,17 @@
                         class="text-decoration-none">{{ $post->category->name }}</a>
                 </p>
 
-                <img src="https://picsum.photos/1200/400?{{ $post->category->name }}" class="img-fluid"
-                    alt="{{ $post->category->name }}">
+                @if ($post->image)
+                    <div style="max-height:420px; overflow: hidden;">
+                        <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid mt-3"
+                            alt="{{ $post->category->name }}">
+                    </div>
+                @else
+                    <img src="https://picsum.photos/1200/400?{{ $post->category->name }}" class="img-fluid"
+                        alt="{{ $post->category->name }}">
+                @endif
+
+
 
                 <article class="my-3 fs-5">
                     {!! $post->body !!}

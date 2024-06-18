@@ -6,7 +6,7 @@
     </div>
 
     <div class="col-lg-8 mb-5">
-        <form action="/dashboard/posts" method="POST">
+        <form action="/dashboard/posts" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -33,15 +33,26 @@
                 <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" id="category"
                     tabindex="2">
                     <option selected class="text-muted">--Pilih Category--</option>
-                        @foreach ($categories as $category)
-                            @if (old('category_id') == $category->id)
-                                <option selected value={{ $category->id }}>{{ $category->name }}</option>
-                            @else
-                                <option value={{ $category->id }}>{{ $category->name }}</option>
-                            @endif
-                        @endforeach
+                    @foreach ($categories as $category)
+                        @if (old('category_id') == $category->id)
+                            <option selected value={{ $category->id }}>{{ $category->name }}</option>
+                        @else
+                            <option value={{ $category->id }}>{{ $category->name }}</option>
+                        @endif
+                    @endforeach
                 </select>
                 @error('category_id')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Post Image</label>
+                <img class="image-preview image-fluid col-sm-5 mb-3">
+                <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
+                    name="image" tabindex="3" onchange="imgPreview()">
+                @error('image')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>
@@ -53,24 +64,9 @@
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
                 <input id="body" type="hidden" name="body" value="{{ old('body') }}">
-                <trix-editor input="body" tabindex="3"></trix-editor>
+                <trix-editor input="body" tabindex="4"></trix-editor>
             </div>
             <button type="submit" class="btn btn-primary">Add Post</button>
         </form>
     </div>
-
-    <script>
-        const title = document.querySelector('#title');
-        const slug = document.querySelector('#slug');
-
-        title.addEventListener('change', function() {
-            fetch(`/dashboard/posts/checkSlug?title=${title.value}`)
-                .then(response => response.json())
-                .then(data => slug.value = data.slug)
-        });
-
-        document.addEventListener('trix-file-accept', function(e) {
-            e.preventDefault();
-        })
-    </script>
 @endsection
