@@ -52,7 +52,8 @@
                 <label for="image" class="form-label">Post Image</label>
                 <input type="hidden" name="oldImg" value="{{ $post->image }}">
                 @if ($post->image)
-                    <img src="{{ asset('storage/' . $post->image) }}" class="image-preview image-fluid col-sm-5 mb-3 d-block">
+                    <img src="{{ asset('storage/' . $post->image) }}"
+                        class="image-preview image-fluid col-sm-5 mb-3 d-block">
                 @else
                     <img class="image-preview image-fluid col-sm-5 mb-3">
                 @endif
@@ -75,4 +76,33 @@
             <button type="submit" class="btn btn-primary">Update Post</button>
         </form>
     </div>
+    
+    <script>
+        const title = document.querySelector('#title');
+        const slug = document.querySelector('#slug');
+
+        title.addEventListener('change', function() {
+            fetch(`/dashboard/posts/checkSlug?title=${title.value}`)
+                .then(response => response.json())
+                .then(data => slug.value = data.slug)
+        });
+
+        document.addEventListener('trix-file-accept', function(e) {
+            e.preventDefault();
+        })
+
+        function imgPreview() {
+            const image = document.querySelector('#image');
+            const imgPreview = document.querySelector('.image-preview');
+
+            imgPreview.style.display = 'block'
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function(oFREvent) {
+                imgPreview.src = oFREvent.target.result
+            }
+        }
+    </script>
 @endsection

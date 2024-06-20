@@ -69,4 +69,35 @@
             <button type="submit" class="btn btn-primary">Add Post</button>
         </form>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const title = document.querySelector('#title');
+            const slug = document.querySelector('#slug');
+
+            title.addEventListener('change', function() {
+                fetch(`/dashboard/posts/checkSlug?title=${title.value}`)
+                    .then(response => response.json())
+                    .then(data => slug.value = data.slug)
+            });
+
+            document.addEventListener('trix-file-accept', function(e) {
+                e.preventDefault();
+            })
+        })
+
+
+        function imgPreview() {
+            const image = document.querySelector('#image');
+            const imgPreview = document.querySelector('.image-preview');
+
+            imgPreview.style.display = 'block'
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function(oFREvent) {
+                imgPreview.src = oFREvent.target.result
+            }
+        }
+    </script>
 @endsection

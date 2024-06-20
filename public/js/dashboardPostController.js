@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "Post ini akan terhapus secara permanen, periksa terlebih dahulu!",
+                text: "Data ini akan terhapus secara permanen, periksa terlebih dahulu!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",

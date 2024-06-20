@@ -41,7 +41,8 @@
             </main>
         </div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
@@ -53,34 +54,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.all.min.js"></script>
     <script src="/js/dashboard.js"></script>
     <script src="/js/dashboardPostController.js"></script>
-    <script>
-        const title = document.querySelector('#title');
-        const slug = document.querySelector('#slug');
 
-        title.addEventListener('change', function() {
-            fetch(`/dashboard/posts/checkSlug?title=${title.value}`)
-                .then(response => response.json())
-                .then(data => slug.value = data.slug)
-        });
 
-        document.addEventListener('trix-file-accept', function(e) {
-            e.preventDefault();
-        })
-
-        function imgPreview() {
-            const image = document.querySelector('#image');
-            const imgPreview = document.querySelector('.image-preview');
-
-            imgPreview.style.display = 'block'
-
-            const oFReader = new FileReader();
-            oFReader.readAsDataURL(image.files[0]);
-
-            oFReader.onload = function(oFREvent) {
-                imgPreview.src = oFREvent.target.result
-            }
-        }
-    </script>
 </body>
 
 </html>
