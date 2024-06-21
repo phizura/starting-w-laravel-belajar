@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
+use App\Interfaces\Category\CategoryInterface;
 use Illuminate\Support\Str;
-use Throwable;
 
 class AdminCategoryController extends Controller
 {
+
+    private $categoryinterface;
+
+    public function __construct(CategoryInterface $categoryinterface)
+    {
+        $this->categoryinterface = $categoryinterface;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +25,7 @@ class AdminCategoryController extends Controller
     public function index()
     {
         return view('dashboard.category.index', [
-            'categories' => Category::all()
+            'categories' => $this->categoryinterface->getAllCategory(),
         ]);
     }
 
@@ -37,16 +45,15 @@ class AdminCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
 
-        $validatedData = $request->validate([
-            'name' => 'required|unique:categories|max:255',
-        ]);
+        $validatedData = $request->validated();
+
         $validatedData['slug'] = Str::slug($request->name);
 
         try {
-            Category::create($validatedData);
+            $this->categoryinterface->createCategory($validatedData);
 
             return redirect()->back()->with('success', 'Category has been added!');
         } catch (\Throwable $err) {
@@ -60,7 +67,7 @@ class AdminCategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(CategoryInterface $category)
     {
         //
     }
@@ -71,8 +78,9 @@ class AdminCategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($slug)
     {
+        $category = $this->categoryinterface->getCategoryBySlug($slug);
         return view('dashboard.category.edit', [
             'category' => $category
         ]);
@@ -85,23 +93,21 @@ class AdminCategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, $slug)
     {
 
 
-        if ($request->name === $category->name) {
-            return redirect('/dashboard/categories')->with('warning', 'Canceled update data');
+        $validatedData = $request->validated();
+        if (!$validatedData) {
+            return redirect('/dashboard/categories')->with('warning', 'Cannot input the same data ');
         }
 
-        $validatedData = $request->validate([
-            'name' => 'required|unique:categories|max:255',
-        ]);
+        $validatedData['slug'] = Str::slug($request->name);
+
 
         try {
 
-
-            Category::where('id', $category->id)
-                ->update($validatedData);
+            $this->categoryinterface->updateCategoryBySlug($slug, $validatedData);
 
             return redirect('/dashboard/categories')->with('success', 'Category has been updated!');
         } catch (\Throwable $err) {
@@ -116,11 +122,12 @@ class AdminCategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
         try {
 
-            Category::destroy($category->id);
+            $this->categoryinterface->destroyCategoryBySlug($id);
+            // Category::destroy($category->id);
             return redirect()->back()->with('success', 'Category has been deleted!');
         } catch (\Throwable $th) {
 

@@ -11,8 +11,13 @@
             @csrf
             <div class="mb-3">
                 <label for="name" class="form-label">Name Category</label>
-                <input type="text" class="form-control" id="name" name="name" required tabindex="1"
+                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" required tabindex="1"
                     value="{{ old('name', $category->name) }}">
+                    @error('name')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
             </div>
             <button type="submit" class="btn btn-primary">Update Category</button>
         </form>

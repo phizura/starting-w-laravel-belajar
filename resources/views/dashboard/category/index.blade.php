@@ -16,6 +16,18 @@
         </script>
     @endif
 
+    @if (session()->has('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "{{ session('error') }}",
+                    icon: "error"
+                });
+            })
+        </script>
+    @endif
+
     @if (session()->has('warning'))
         <script>
             document.addEventListener('DOMContentLoaded', (event) => {
@@ -34,7 +46,8 @@
                 Add Category
             </button>
 
-            <div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade @if ($errors->any()) show-modal @endif" id="CreateModal" tabindex="-1"
+                aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -103,31 +116,11 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const submitButton = document.getElementById('swal-button-category')
-
-            if (submitButton) {
-                submitButton.addEventListener('click', function(event) {
-                    event.preventDefault();
-
-                    const form = this.closest('form')
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Yes, delete it!"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-
-                        }
-                    });
-                })
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.querySelector('.show-modal')) {
+                var myModal = new bootstrap.Modal(document.getElementById('CreateModal'));
+                myModal.show();
             }
-
-
-        })
+        });
     </script>
 @endsection

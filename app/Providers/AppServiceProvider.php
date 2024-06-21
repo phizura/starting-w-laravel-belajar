@@ -5,7 +5,13 @@ namespace App\Providers;
 use App\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
+use App\Interfaces\User\UserInterface;
+use App\Interfaces\Category\CategoryInterface;
+use App\Interfaces\PostInterface;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\User\UserRepository;
+use App\Repositories\Category\CategoryRepository;
+use App\Repositories\PostRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(UserInterface::class, UserRepository::class);
+        $this->app->bind(CategoryInterface::class, CategoryRepository::class);
+        $this->app->bind(PostInterface::class, PostRepository::class);
     }
 
     /**

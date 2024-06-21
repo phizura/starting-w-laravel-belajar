@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
+use App\Interfaces\Category\CategoryInterface;
+use App\Interfaces\PostInterface;
 use App\Models\Post;
 use Illuminate\Support\Str;
 use Cviebrock\EloquentSluggable\Services\SlugService;
@@ -11,6 +14,15 @@ use Illuminate\Support\Facades\Storage;
 
 class DashboardPostController extends Controller
 {
+
+    private $postinterface;
+    private $categoryinterface;
+
+    public function __construct(PostInterface $postinterface, CategoryInterface $categoryinterface)
+    {
+        $this->postinterface = $postinterface;
+        $this->categoryinterface = $categoryinterface;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +31,7 @@ class DashboardPostController extends Controller
     public function index()
     {
         return view("dashboard.post.index", [
-            'posts' => Post::where('user_id', auth()->user()->id)->get(),
+            'posts' => $this->postinterface->getAllPostUser(),
         ]);
     }
 
@@ -31,7 +43,7 @@ class DashboardPostController extends Controller
     public function create()
     {
         return view('dashboard.post.create', [
-            'categories' => Category::all()
+            'categories' => $this->categoryinterface->getAllCategory(),
         ]);
     }
 
@@ -41,15 +53,9 @@ class DashboardPostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response${title.value}
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'slug' => 'required|unique:posts',
-            'category_id' => 'required|not_in:--Pilih Category--',
-            'image' => 'image|file|max:5024',
-            'body' => 'required'
-        ]);
+        $validatedData = $request->validated();
 
         if ($request->file('image')) {
             $validatedData['image'] = $request->file('image')->store('post-images');
@@ -58,9 +64,15 @@ class DashboardPostController extends Controller
         $validatedData['user_id'] = auth()->user()->id;
         $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 270);
 
-        Post::create($validatedData);
+        try {
 
-        return redirect('/dashboard/posts')->with('success', 'New post has been added!');
+            $this->postinterface->create($validatedData);
+
+            return redirect('/dashboard/posts')->with('success', 'New post has been added!');
+        } catch (\Throwable $err) {
+
+            return redirect('/dashboard/posts')->with('error', 'Failed add post!' . $err);
+        }
     }
 
     /**
@@ -69,8 +81,9 @@ class DashboardPostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($slug)
     {
+        $post = $this->postinterface->getOneByslug($slug);
         return view('dashboard.post.show', [
             "post" => $post
         ]);
@@ -82,11 +95,12 @@ class DashboardPostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit($slug)
     {
+        $post = $this->postinterface->getOneByslug($slug);
         return view('dashboard.post.edit', [
             'post' => $post,
-            'categories' => Category::all()
+            'categories' => $this->categoryinterface->getAllCategory()
         ]);
     }
 
@@ -97,23 +111,14 @@ class DashboardPostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostRequest $request, $slug)
     {
-        $rules = [
-            'title' => 'required|max:255',
-            'category_id' => 'required|not_in:--Pilih Category--',
-            'image' => 'image|file|max:5024',
-            'body' => 'required'
-        ];
 
-        if ($request->slug != $post->slug) {
-            $rules['slug'] = 'required|unique:posts';
-        }
-
-        $validatedData = $request->validate($rules);
+        $post = $this->postinterface->getOneByslug($slug);
+        $validatedData = $request->validated();
 
         if ($request->file('image')) {
-            if($request->oldImg){
+            if (request()->oldImg) {
                 Storage::delete($post->image);
             }
             $validatedData['image'] = $request->file('image')->store('post-images');
@@ -122,8 +127,15 @@ class DashboardPostController extends Controller
         $validatedData['user_id'] = auth()->user()->id;
         $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 270);
 
-        Post::where('id', $post->id)
-            ->update($validatedData);
+        try {
+
+            $this->postinterface->update($slug, $validatedData);
+
+            return redirect('/dashboard/posts')->with('success', 'Post has been updated!');
+        } catch (\Throwable $err) {
+
+            return redirect('/dashboard/posts')->with('error', 'Failed update post!' . $err);
+        }
 
         return redirect('/dashboard/posts')->with('success', 'Post has been updated!');
     }
@@ -134,15 +146,23 @@ class DashboardPostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($slug)
     {
+        $post = $this->postinterface->getOneByslug($slug);
         if ($post->image) {
             Storage::delete($post->image);
         }
 
         Post::destroy($post->id);
+        try {
 
-        return redirect('/dashboard/posts')->with('success', 'Post has been deleted!');
+            $this->postinterface->delete($slug);
+
+            return redirect('/dashboard/posts')->with('success', 'Post has been deleted!');
+        } catch (\Throwable $err) {
+
+            return redirect('/dashboard/posts')->with('error', 'Failed delete post!' . $err);
+        }
     }
 
     public function checkSlug(Request $request)

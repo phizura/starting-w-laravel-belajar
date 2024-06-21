@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\User\UserInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
 {
+    private $UserInterface;
+
+    public function __construct(UserInterface $usernterface)
+    {
+        $this->UserInterface = $usernterface;
+    }
+
     public function index()
     {
+        // return $this->UserInterface->getUsersByRole(1);
         return view("dashboard.user.index", [
-            "admins" => User::where('is_admin', 1)->get(),
-            "members" => User::where("is_admin", 0)->get(),
+            "admins" => $this->UserInterface->getUsersByRole(1),
+            "members" => $this->UserInterface->getUsersByRole(0),
         ]);
     }
 
@@ -32,8 +41,7 @@ class AdminUserController extends Controller
 
         try {
 
-            User::where('id', $user->id)
-                ->update($data);
+            $this->UserInterface->updateUserById($user->id, $data);
             return redirect()->back()->with('success', $success);
         } catch (\Throwable $err) {
 
