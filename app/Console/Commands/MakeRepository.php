@@ -26,7 +26,7 @@ class MakeRepository extends Command
         $this->createFile($interfacePath, 'Interface', 'Interfaces', $name, $pilihan);
         $this->createFile($repositoryPath, 'Repository', 'Repositories', $name, $pilihan);
 
-        // $this->addBindingToServiceProvider($serviceName, $name);
+        $this->addBindingToServiceProvider($serviceName, $name);
 
         $this->info('Files created and Binding added successfully!');
 

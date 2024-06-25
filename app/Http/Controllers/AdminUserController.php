@@ -2,50 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\RoleAsignmentsInterface;
 use App\Interfaces\User\UserInterface;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminUserController extends Controller
 {
-    private $UserInterface;
+    private $userinterface;
+    private $historyrole;
 
-    public function __construct(UserInterface $usernterface)
+    public function __construct(UserInterface $usernterface, RoleAsignmentsInterface $roleasignmentinterface)
     {
-        $this->UserInterface = $usernterface;
+        $this->userinterface = $usernterface;
+        $this->historyrole = $roleasignmentinterface;
     }
 
     public function index()
     {
-        // return $this->UserInterface->getUsersByRole(1);
         return view("dashboard.user.index", [
-            "admins" => $this->UserInterface->getUsersByRole(1),
-            "members" => $this->UserInterface->getUsersByRole(0),
+            "admins" => $this->userinterface->getUsersByRole(1),
+            "members" => $this->userinterface->getUsersByRole(0),
+            "histories" => $this->historyrole->getAllHistory()
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        $user = $this->userinterface->getUserById($id);
 
-        $data = [];
+        $collection = collect([
+            'user_id' => $user->id,
+            'changed_by' => auth()->user()->id,
+        ]);
+
         if ($request->type === 'promote') {
-            $data['is_admin'] = 1;
+
+            $status = ['is_admin' => 1];
+            $log = $collection->merge([
+                'old_role' => 'Member',
+                'new_role' => 'Admin',
+                'change_type' => 'PROMOTE'
+            ]);
             $success = $user->username . 'has been promoted to admin';
             $error = $user->username . 'Failed promote to admin';
         } else {
 
-            $data['is_admin'] = 0;
+            $status = ['is_admin' => 0];
+            $log = $collection->merge([
+                'old_role' => 'Admin',
+                'new_role' => 'Member',
+                'change_type' => 'DEMOTE'
+            ]);
             $success = $user->username . 'has been demoted to admin';
             $error = $user->username . 'Failed demote to admin';
         }
 
+        DB::beginTransaction();
         try {
 
-            $this->UserInterface->updateUserById($user->id, $data);
-            return redirect()->back()->with('success', $success);
-        } catch (\Throwable $err) {
+            $this->historyrole->create($log->all());
+            $this->userinterface->updateUserById($user->id, $status);
+            DB::commit();
 
-            return redirect()->back()->with('error', $error . ":" . $err);
+            return redirect()->back()->with('success', $success);
+        } catch (\Exception $err) {
+
+            DB::rollBack();
+            return redirect()->back()->with('error', $error . ":" . $err->getMessage());
         }
     }
 }

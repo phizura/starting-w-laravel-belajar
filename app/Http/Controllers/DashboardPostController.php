@@ -115,7 +115,14 @@ class DashboardPostController extends Controller
     {
 
         $post = $this->postinterface->getOneByslug($slug);
-        $validatedData = $request->validated();
+        // $validatedData = $request->validated();
+
+        $collec = collect($request)->merge([
+            'user_id' => auth()->user()->id,
+            'excerpt' => Str::limit(strip_tags($request->body), 270)
+        ]);
+
+        // dd($collec);
 
         if ($request->file('image')) {
             if (request()->oldImg) {
@@ -124,17 +131,18 @@ class DashboardPostController extends Controller
             $validatedData['image'] = $request->file('image')->store('post-images');
         }
 
-        $validatedData['user_id'] = auth()->user()->id;
-        $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 270);
+
+        // $validatedData['user_id'] = auth()->user()->id;
+        // $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 270);
 
         try {
 
-            $this->postinterface->update($slug, $validatedData);
+            $this->postinterface->update($slug, $collec->all());
 
             return redirect('/dashboard/posts')->with('success', 'Post has been updated!');
-        } catch (\Throwable $err) {
+        } catch (\Exception $err) {
 
-            return redirect('/dashboard/posts')->with('error', 'Failed update post!' . $err);
+            return redirect('/dashboard/posts')->with('error', 'Failed update post!' . $err->getMessage());
         }
 
         return redirect('/dashboard/posts')->with('success', 'Post has been updated!');
@@ -171,4 +179,6 @@ class DashboardPostController extends Controller
         $slug = SlugService::createSlug(Post::class, 'slug', $request->title);
         return response()->json(['slug' => $slug]);
     }
+
+
 }

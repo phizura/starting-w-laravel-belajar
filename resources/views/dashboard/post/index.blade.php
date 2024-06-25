@@ -17,6 +17,18 @@
         </script>
     @endif
 
+    @if (session()->has('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "{{ session('error') }}",
+                    icon: "error"
+                });
+            })
+        </script>
+    @endif
+
     <div class="table-responsive col-lg-8">
         <div class="d-flex justify-content-end">
             <a href="/dashboard/posts/create" class="btn btn-primary">Create Post</a>

@@ -16,11 +16,18 @@
                 <td>{{ $admin->username }}</td>
                 <td>{{ $admin->email }}</td>
                 <td>
-                    <button class="badge bg-danger border-0" onclick="changeRole({{ $admin->id }}, 'demote')">
-                        <div class="d-flex align-items-center">
-                            <span data-feather="chevrons-down"></span> Demote
-                        </div>
-                    </button>
+                    @if ($admin->id === auth()->user()->id)
+                        <span class="text-muted">
+                            Its you
+                        </span>
+                    @else
+                        <button class="badge bg-danger border-0" onclick="changeRole({{ $admin->id }}, 'demote')">
+                            <div class="d-flex align-items-center">
+                                <span data-feather="chevrons-down"></span> Demote
+                            </div>
+                        </button>
+                    @endif
+
                 </td>
             </tr>
         @endforeach

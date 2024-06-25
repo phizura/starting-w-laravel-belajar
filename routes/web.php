@@ -61,12 +61,20 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth');
 Route::get('/register', [RegisterController::class, 'index']);
 Route::post('/register', [RegisterController::class, 'store']);
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 
-Route::get('/dashboard/posts/checkSlug', [DashboardPostController::class, 'checkSlug'])->middleware('auth');
-Route::resource('/dashboard/posts', DashboardPostController::class)->parameters(['post' => 'slug'])->middleware('auth');
 
-Route::resource('/dashboard/categories', AdminCategoryController::class)->except(['show', 'create'])->parameters(['category' => 'slug'])->middleware('admin');
 
-Route::get('/dashboard/users', [AdminUserController::class, 'index'])->middleware('admin');
-Route::put('/dashboard/users/{user}', [AdminUserController::class, 'update'])->middleware('admin');
+
+
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
+
+    Route::get('/posts/checkSlug', [DashboardPostController::class, 'checkSlug'])->middleware('auth');
+    Route::resource('/posts', DashboardPostController::class)->parameters(['post' => 'slug'])->middleware('auth');
+
+    Route::resource('/categories', AdminCategoryController::class)->except(['show', 'create'])->parameters(['category' => 'slug'])->middleware('admin');
+
+    Route::get('/users', [AdminUserController::class, 'index'])->middleware('admin');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->middleware('admin');
+});

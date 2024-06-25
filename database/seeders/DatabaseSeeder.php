@@ -25,13 +25,15 @@ class DatabaseSeeder extends Seeder
         //     'password' => bcrypt('123'),
         // ]);
 
-        // User::create([
-        //     'name' => 'Bang Gena',
-        //     'email' => 'gena@phi.com',
-        //     'password' => bcrypt('123'),
-        // ]);
+        User::factory(126)->create();
 
-        User::factory(3)->create();
+        User::create([
+            'name' => 'Satrio Adi Prakoso',
+            'email' => 'satrioapra@gmail.com',
+            'username' => 'phizura',
+            'password' => bcrypt('123'),
+            'is_admin' => true,
+        ]);
 
         Category::create([
             'name' => 'Web Programing',
@@ -48,7 +50,12 @@ class DatabaseSeeder extends Seeder
             'slug' => 'personal'
         ]);
 
-        Post::factory(27)->create();
+        Category::create([
+            'name' => 'Machine Learning',
+            'slug' => 'machine-learning'
+        ]);
+
+        Post::factory(500)->create();
 
         // Post::create([
         //     'title' => 'Judul Pertama',

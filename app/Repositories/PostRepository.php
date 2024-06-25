@@ -34,7 +34,7 @@ class PostRepository implements PostInterface
         $this->post->create($data);
     }
 
-    public function update($slug, array $data)
+    public function update($slug, $data)
     {
         $post = $this->getOneByslug($slug);
         $post->update($data);

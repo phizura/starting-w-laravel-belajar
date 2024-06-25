@@ -26,7 +26,7 @@ class PostController extends Controller
             $title = ' in ' . $category->name;
         };
         if (request('author')) {
-            $author = $this->userinterface->getUsersByUsername(request('author'));
+            $author = $this->userinterface->getUserByUsername(request('author'));
             $title = ' by ' . $author->name;
         };
 

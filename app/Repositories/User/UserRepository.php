@@ -19,12 +19,17 @@ class UserRepository implements UserInterface
         return $this->user->all();
     }
 
+    public function getUserById($id)
+    {
+        return $this->user->findOrFail($id);
+    }
+
     public function getUsersByRole($role)
     {
         return $this->user->where("is_admin", $role)->get();
     }
 
-    public function getUsersByUsername($username)
+    public function getUserByUsername($username)
     {
         return $this->user->firstWhere('username', $username);
     }

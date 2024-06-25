@@ -27,7 +27,7 @@ class StorePostRequest extends FormRequest
             'title' => 'required|max:255',
             'slug' => 'required|unique:posts',
             'category_id' => 'required|not_in:--Pilih Category--',
-            'image' => 'image|file|max:5024',
+            'image' => 'image|file|mimes:jpg,png|max:5024',
             'body' => 'required'
         ];
     }

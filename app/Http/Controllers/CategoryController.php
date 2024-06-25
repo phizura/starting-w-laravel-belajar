@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Interfaces\Category\CategoryInterface;
 
 class CategoryController extends Controller

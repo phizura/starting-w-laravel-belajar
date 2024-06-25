@@ -23,8 +23,8 @@ class PostFactory extends Factory
                 ->map(function($p){
                     return "<p>$p</p>";
                 })->implode(''),
-            'user_id' => mt_rand(1, 3),
-            'category_id' => mt_rand(1, 3)
+            'user_id' => mt_rand(1, 126),
+            'category_id' => mt_rand(1, 4)
         ];
     }
 }

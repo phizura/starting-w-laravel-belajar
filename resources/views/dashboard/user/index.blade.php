@@ -7,6 +7,8 @@
                 role="tab" aria-controls="tab-admin" aria-selected="true">Admins</button>
             <button class="nav-link" id="tab-nav-member" data-bs-toggle="tab" data-bs-target="#tab-member" type="button"
                 role="tab" aria-controls="tab-member" aria-selected="false">Members</button>
+            <button class="nav-link" id="tab-nav-history" data-bs-toggle="tab" data-bs-target="#tab-history" type="button"
+                role="tab" aria-controls="tab-history" aria-selected="false">Change Role</button>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -15,6 +17,9 @@
         </div>
         <div class="tab-pane fade" id="tab-member" role="tabpanel" aria-labelledby="tab-nav-member">
             @include('dashboard.user.member')
+        </div>
+        <div class="tab-pane fade" id="tab-history" role="tabpanel" aria-labelledby="tab-nav-history">
+            @include('dashboard.user.history')
         </div>
     </div>
 

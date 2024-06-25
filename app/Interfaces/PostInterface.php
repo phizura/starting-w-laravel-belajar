@@ -10,6 +10,6 @@ interface PostInterface
     public function getOneByslug($slug);
 
     public function create(array $data);
-    public function update($slug, array $data );
+    public function update($slug,  $data );
     public function delete($slug);
 }
