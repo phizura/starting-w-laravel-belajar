@@ -2,12 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
-    public function show(User $author)
+
+    private $userService;
+
+    public function __construct(UserService $userService)
     {
+        $this->userService = $userService;
+    }
+
+    public function show($username)
+    {
+        $author = $this->userService->getUser([
+            "key" => "username",
+            "data" => $username
+        ]);
+
         return view('posts', [
             'title' => "Post by Author: $author->name",
             'active' => "Post by Author",

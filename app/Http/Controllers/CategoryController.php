@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\Category\CategoryInterface;
+use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
-    private $categoryInterface;
+    private $categoryService;
 
-    public function __construct(CategoryInterface $categoryInterface)
+    public function __construct(CategoryService $categoryService)
     {
-        $this->categoryInterface = $categoryInterface;
+        $this->categoryService = $categoryService;
     }
 
     public function index()
@@ -18,12 +18,13 @@ class CategoryController extends Controller
         return view('categories', [
             'title' => 'Post Categories',
             'active' => 'Categories',
-            'categories' => $this->categoryInterface->getAllCategory(),
+            'categories' => $this->categoryService->getAll(),
         ]);
     }
 
-    public function show(categoryInterface $category)
+    public function show($slug)
     {
+        $category = $this->categoryService->getBySlug($slug);
         return view('posts', [
             'title' => "Post by Category: $category->name",
             'active' => "Category",

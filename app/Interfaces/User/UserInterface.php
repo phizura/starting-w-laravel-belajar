@@ -4,10 +4,10 @@ namespace App\Interfaces\User;
 
 interface UserInterface
 {
-    public function getAllUsers();
-    public function getUserById($id);
-    public function getUsersByRole($role);
-    public function getUserByUsername($username);
+    public function getAll();
+    public function getById($id);
+    public function getByRole($role);
+    public function getByUsername($username);
 
-    public function updateUserById($id, $data);
+    public function update($id, $data);
 }

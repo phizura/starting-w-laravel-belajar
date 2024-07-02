@@ -2,31 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\Category\CategoryInterface;
 use App\Interfaces\PostInterface;
-use App\Interfaces\User\UserInterface;
+use App\Services\CategoryService;
+use App\Services\UserService;
 
 class PostController extends Controller
 {
     private $postinterface;
-    private $categoryinterface;
-    private $userinterface;
+    private $categoryService;
+    private $userService;
 
-    public function __construct(PostInterface $postinterface, CategoryInterface $categoryinterface, UserInterface $userinterface)
+    public function __construct(PostInterface $postinterface, CategoryService $categoryService, UserService $userService)
     {
         $this->postinterface = $postinterface;
-        $this->categoryinterface = $categoryinterface;
-        $this->userinterface = $userinterface;
+        $this->categoryService = $categoryService;
+        $this->userService = $userService;
     }
     public function index()
     {
         $title = '';
         if (request('category')) {
-            $category = $this->categoryinterface->getCategoryBySlug(request('category'));
+            $category = $this->categoryService->getBySlug(request('category'));
             $title = ' in ' . $category->name;
         };
         if (request('author')) {
-            $author = $this->userinterface->getUserByUsername(request('author'));
+            $author = $this->userService->getUser(['key' => 'username', 'data' => request('author')]);
             $title = ' by ' . $author->name;
         };
 

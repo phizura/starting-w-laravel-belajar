@@ -4,11 +4,11 @@ namespace App\Interfaces\Category;
 
 interface CategoryInterface
 {
-    public function getAllCategory();
-    public function getCategoryBySlug($slg);
+    public function getAll();
+    public function getBySlug($slg);
 
-    public function createCategory(array $data);
-    public function updateCategoryBySlug($slug, array $data);
-    public function destroyCategoryBySlug($id);
+    public function create($data);
+    public function updateBySlug($slug, $data);
+    public function destroyBySlug($id);
 
 }

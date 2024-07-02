@@ -14,30 +14,30 @@ class CategoryRepository implements CategoryInterface
         $this->category = $category;
     }
 
-    public function getAllCategory()
+    public function getAll()
     {
         return $this->category->all();
     }
 
-    public function getCategoryBySlug($slug)
+    public function getBySlug($slug)
     {
         return $this->category->where("slug", $slug)->firstOrFail();
     }
 
-    public function createCategory(array $data)
+    public function create($data)
     {
         $this->category->create($data);
     }
 
-    public function updateCategoryBySlug($slug, array $data)
+    public function updateBySlug($slug, $data)
     {
-        $category = $this->getCategoryBySlug($slug);
+        $category = $this->getBySlug($slug);
         $category->update($data);
     }
 
-    public function destroyCategoryBySlug($slug)
+    public function destroyBySlug($slug)
     {
-        $category = $this->getCategoryBySlug($slug);
+        $category = $this->getBySlug($slug);
         $category->delete();
     }
 }

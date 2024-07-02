@@ -19,6 +19,7 @@ class PostRepository implements PostInterface
             ->paginate(7)->withQueryString();
     }
 
+
     public function getAllPostUser()
     {
         return $this->post->where('user_id', auth()->user()->id)->get();
@@ -29,7 +30,7 @@ class PostRepository implements PostInterface
         return $this->post->firstWhere('slug', $slug);
     }
 
-    public function create(array $data)
+    public function create($data)
     {
         $this->post->create($data);
     }
@@ -42,8 +43,7 @@ class PostRepository implements PostInterface
 
     public function delete($slug)
     {
-        $post = $this->post->getOneByslug($slug);
-        $post->delete();
+        $this->post->where('slug', $slug)->delete();
     }
 
 }

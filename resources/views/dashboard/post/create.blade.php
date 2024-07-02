@@ -5,6 +5,18 @@
         <h1 class="h2">Create Posts</h1>
     </div>
 
+    @if (session()->has('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "{{ session('error') }}",
+                    icon: "error"
+                });
+            })
+        </script>
+    @endif
+
     <div class="col-lg-8 mb-5">
         <form action="/dashboard/posts" method="POST" enctype="multipart/form-data">
             @csrf

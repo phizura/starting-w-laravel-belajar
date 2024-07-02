@@ -49,19 +49,22 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $post->title }}</td>
                         <td>{{ $post->category->name }}</td>
-                        <td>
-                            <a href="/dashboard/posts/{{ $post->slug }}" class="badge bg-info"><span
-                                    data-feather="eye"></span></a>
-                            <a href="/dashboard/posts/{{ $post->slug }}/edit" class="badge bg-warning"><span
-                                    data-feather="edit"></span></a>
-                            <form action="/dashboard/posts/{{ $post->slug }}" method="POST"
-                                class="d-inline del-confirm-form">
-                                @method('delete')
-                                @csrf
-                                <button type="button" class="badge bg-danger border-0 del-confirm-btn">
-                                    <span data-feather="x-circle"></span>
-                                </button>
-                            </form>
+                        <td >
+                            {{-- <div class="d-flex"> --}}
+
+                                <a href="/dashboard/posts/{{ $post->slug }}" class="badge bg-info"><span
+                                        data-feather="eye"></span></a>
+                                <a href="/dashboard/posts/{{ $post->slug }}/edit" class="badge bg-warning"><span
+                                        data-feather="edit"></span></a>
+                                <form action="/dashboard/posts/{{ $post->slug }}" method="POST"
+                                    class="d-inline del-confirm-form">
+                                    @method('delete')
+                                    @csrf
+                                    <button type="button" class="badge bg-danger border-0 del-confirm-btn">
+                                        <span data-feather="x-circle"></span>
+                                    </button>
+                                </form>
+                            {{-- </div> --}}
                         </td>
                     </tr>
                 @endforeach
